@@ -1,0 +1,473 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align to the top */
+    min-height: 100vh;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px; /* Increased max-width for the new page */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* Header Styling */
+.header {
+    background: linear-gradient(to right, #4CAF50, #2196F3); /* Green to Blue gradient */
+    color: white;
+    padding: 25px 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    position: relative; /* For positioning back button */
+}
+
+.header-icon {
+    font-size: 2.5em;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: 600;
+    flex-grow: 1; /* Allows h1 to take available space */
+}
+
+/* Card Styling */
+.card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    margin: 25px 30px;
+}
+
+.card h2 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.5em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+}
+
+/* Form Grid Layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 20px; /* Space between grid items */
+    margin-bottom: 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.95em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group select {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="date"]:focus,
+.form-group select:focus {
+    border-color: #2196F3;
+    box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2);
+    outline: none;
+}
+
+/* Button Row */
+.button-row {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none; /* For button links */
+    color: white; /* Default button text color */
+}
+
+.primary-btn {
+    background-color: #2196F3; /* Blue */
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #1976D2; /* Darker blue */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.secondary-btn {
+    background-color: #6c757d; /* Gray */
+    color: white;
+}
+
+.secondary-btn:hover {
+    background-color: #5a6268; /* Darker gray */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.accent-btn {
+    background-color: #007bff; /* A nice accent blue */
+    color: white;
+    width: 100%; /* Make the view prescriptions button full width */
+    justify-content: center; /* Center content */
+}
+
+.accent-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+
+.upload-btn {
+    background-color: #6c757d; /* Gray */
+    color: white;
+}
+
+.upload-btn:hover {
+    background-color: #5a6268; /* Darker gray */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* Custom file input styling */
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.upload-btn-wrapper input[type=file] {
+    font-size: 100px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* View Prescriptions Section (on index.html) */
+.view-prescriptions-section {
+    margin-top: 0; /* Align with top section */
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-top: 1px solid #eee;
+    text-align: center; /* Center the button */
+    box-shadow: none; /* Remove card shadow */
+}
+
+/* Styles for patient_prescriptions.html */
+.prescription-container .header {
+    background: linear-gradient(to right, #28a745, #17a2b8); /* Different gradient for prescription page */
+}
+.prescription-container .header-icon {
+    font-size: 2.2em;
+}
+
+.back-button {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 8px 15px;
+    font-size: 0.9em;
+}
+
+.prescription-main-content {
+    display: flex;
+    gap: 25px; /* Space between left and right panes */
+    margin: 25px 30px;
+    align-items: stretch; /* Make panes stretch to fill height */
+}
+
+.left-pane {
+    flex: 0 0 350px; /* Fixed width for left pane */
+    padding: 20px;
+    max-height: calc(100vh - 180px); /* Adjust height for scroll, considering header/footer */
+    overflow-y: auto; /* Enable scrolling for the list */
+}
+
+.right-pane {
+    flex-grow: 1; /* Right pane takes remaining space */
+    padding: 20px;
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+}
+
+.left-pane h2, .right-pane h2 {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-bar input[type="text"] {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+.prescription-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.prescription-list li {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: #333;
+}
+
+.prescription-list li:hover {
+    background-color: #e2e6ea;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.prescription-list li.active {
+    background-color: #d1ecf1; /* Highlight active item */
+    border-color: #bee5eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.prescription-list li i {
+    color: #007bff;
+}
+
+.prescription-list .placeholder-item {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    background-color: transparent;
+    border: none;
+    cursor: default;
+    padding: 30px 15px;
+}
+.prescription-list .placeholder-item:hover {
+    background-color: transparent;
+    transform: none;
+    box-shadow: none;
+}
+
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.patient-id-display {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #007bff;
+}
+
+.prescription-detail-content {
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 20px;
+    min-height: 250px; /* Ensure some height for content */
+}
+
+.prescription-detail-content .placeholder-text {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 50px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.prescription-detail-content .placeholder-text i {
+    font-size: 2em;
+    color: #ccc;
+}
+
+/* Add this to the end of your style.css */
+
+.patient-general-details {
+    background-color: #e9f7ef; /* Light green background */
+    border: 1px solid #d4edda;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+    color: #333;
+}
+
+.patient-general-details p {
+    margin: 5px 0;
+}
+
+.patient-general-details p strong {
+    color: #28a745; /* Green text for labels */
+}
+
+.patient-general-details .not-found {
+    color: #dc3545; /* Red for not found message */
+    font-style: italic;
+    text-align: center;
+}
+
+
+.image-display {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.image-display img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    max-height: 300px; /* Limit image height to prevent excessive scrolling */
+    object-fit: contain; /* Ensure image fits within bounds */
+}
+
+.summary-text {
+    white-space: pre-wrap; /* Preserve whitespace and line breaks */
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 15px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    color: #333;
+    font-size: 0.95em;
+    max-height: 250px; /* Limit summary height */
+    overflow-y: auto;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .prescription-main-content {
+        flex-direction: column;
+        margin: 15px 20px;
+    }
+    .left-pane, .right-pane {
+        flex: none; /* Remove fixed flex basis */
+        width: 100%; /* Take full width */
+        max-height: none; /* Remove height limits to allow natural flow */
+        margin: 0;
+    }
+    .header {
+        flex-wrap: wrap; /* Allow header items to wrap */
+        padding-bottom: 15px; /* Adjust padding */
+    }
+    .back-button {
+        position: static; /* Position normally */
+        transform: none; /* Remove transform */
+        margin-top: 10px; /* Add margin */
+        width: 100%; /* Full width */
+        order: 3; /* Place at the bottom */
+    }
+    .header h1 {
+        font-size: 1.6em;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr; /* Single column on smaller screens */
+    }
+    .button-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .header h1 {
+        font-size: 1.5em;
+    }
+    .header-icon {
+        font-size: 2em;
+    }
+    body {
+        padding: 10px;
+    }
+    .container {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .card {
+        margin: 15px 10px;
+        padding: 20px;
+    }
+    .header {
+        padding: 15px 20px;
+    }
+}

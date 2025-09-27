@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <i class="fa-solid fa-hospital-user header-icon"></i>
+            <h1>Hospital Management System</h1>
+        </header>
+
+        <section class="card patient-registration">
+            <h2>Patient Registration/Details Upload</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="patientId">Patient ID</label>
+                    <input type="text" id="patientId" name="patientId" placeholder="e.g., P001">
+                </div>
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="Enter patient's full name">
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="contactInfo">Contact Information</label>
+                    <input type="text" id="contactInfo" name="contactInfo" placeholder="Phone or Email">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" placeholder="Patient's address">
+                </div>
+            </div>
+
+            <div class="button-row">
+                <div class="upload-btn-wrapper">
+                    <button class="btn upload-btn" id="uploadMedicalHistoryVisualBtn"><i class="fas fa-cloud-upload-alt"></i> Upload Prescription Image</button>
+                    <input type="file" id="medicalHistoryUpload" name="medicalHistory" accept="image/*" multiple>
+                </div>
+                <button class="btn primary-btn" id="savePatientDetailsBtn">Save Patient Details</button>
+            </div>
+        </section>
+
+        <section class="card view-prescriptions-section">
+            <button class="btn accent-btn" id="viewPrescriptionsBtn">
+                <i class="fas fa-eye"></i> See Full Patient Detailed Prescriptions
+            </button>
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Prescriptions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <h1><i class="fas fa-stethoscope"></i> Patient Prescription Portal</h1>
+        <nav>
+            <a href="index.html" class="nav-button"><i class="fas fa-user-plus"></i> Register Patient</a>
+            <a href="patient_prescriptions.html" class="nav-button active"><i class="fas fa-clipboard-list"></i> View Prescriptions</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="search-section card">
+            <h2><i class="fas fa-search"></i> Search Patient Prescriptions</h2>
+            <div class="form-group">
+                <label for="patientIdSearch">Patient ID:</label>
+                <input type="text" id="patientIdSearch" placeholder="Enter Patient ID (e.g., P001)" required>
+                <button id="loadPrescriptionsBtn" class="btn btn-primary"><i class="fas fa-arrow-alt-circle-down"></i> Load Prescriptions</button>
+            </div>
+            <p id="selectedPatientId" class="patient-id-display">Patient ID: Not Selected</p>
+        </section>
+
+        <section class="patient-details-overview card" id="patientGeneralDetails">
+            <h3><i class="fas fa-user-md"></i> Patient General Details</h3>
+            <p><strong>Name:</strong> <span id="detailName">N/A</span></p>
+            <p><strong>DOB:</strong> <span id="detailDob">N/A</span></p>
+            <p><strong>Gender:</strong> <span id="detailGender">N/A</span></p>
+            <p><strong>Contact:</strong> <span id="detailContact">N/A</span></p>
+            <p><strong>Address:</strong> <span id="detailAddress">N/A</span></p>
+        </section>
+
+        <section class="prescriptions-grid">
+            <div class="card prescription-list-card">
+                <h2><i class="fas fa-list-alt"></i> Prescriptions</h2>
+                <ul id="prescriptionList" class="prescription-list">
+                    <li class="placeholder-item"><i class="fas fa-info-circle"></i> Enter Patient ID and click Load.</li>
+                </ul>
+            </div>
+
+            <div class="card prescription-detail-card" id="prescriptionDetailContent">
+                <h2><i class="fas fa-notes-medical"></i> Prescription Details</h2>
+                <p class="placeholder-text">
+                    <i class="fas fa-mouse-pointer"></i> Select a prescription from the left pane to view its summary here.
+                </p>
+                <div id="imageDisplay" class="image-display">
+                    </div>
+                <h3>Summary:</h3>
+                <pre id="summaryText" class="summary-text">
+                    </pre>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
