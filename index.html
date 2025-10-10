@@ -53,6 +53,12 @@
                     <button class="btn upload-btn" id="uploadMedicalHistoryVisualBtn"><i class="fas fa-cloud-upload-alt"></i> Upload Prescription Image</button>
                     <input type="file" id="medicalHistoryUpload" name="medicalHistory" accept="image/*" multiple>
                 </div>
+
+                <div class="upload-btn-wrapper">
+                    <button class="btn upload-btn" id="uploadUsgReportVisualBtn"><i class="fas fa-cloud-upload-alt"></i> Upload USG Report</button>
+                    <input type="file" id="usgReportUpload" name="usgReport" accept="image/*, .pdf" multiple>
+                </div>
+
                 <button class="btn primary-btn" id="savePatientDetailsBtn">Save Patient Details</button>
             </div>
         </section>
@@ -60,6 +66,13 @@
         <section class="card view-prescriptions-section">
             <button class="btn accent-btn" id="viewPrescriptionsBtn">
                 <i class="fas fa-eye"></i> See Full Patient Detailed Prescriptions
+            </button>
+
+        </section>
+
+         <section class="card view-usg-section">
+           <button class="btn accent-btn" id="viewUsgReportsBtn" style="margin-top: 10px;">
+                <i class="fas fa-eye"></i> See Full USG Report Details
             </button>
         </section>
 

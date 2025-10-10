@@ -3,12 +3,68 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- Configuration ---
     const FLASK_BACKEND_BASE_URL = 'http://127.0.0.1:8000'; // Base URL for your Flask backend
-    const SUMMARIZATION_ENDPOINT = `${FLASK_BACKEND_BASE_URL}/upload_and_summarize`;
+    const SUMMARIZATION_ENDPOINT = `${FLASK_BACKEND_BASE_URL}/upload_and_summarize`; // New endpoint for USG report summarization
+    
+    const USG_SUMMARIZATION_ENDPOINT = 'http://127.0.0.1:8000/upload_and_generate_usg_report'; // Adjust port if needed
+
     const SAVE_PATIENT_ENDPOINT = `${FLASK_BACKEND_BASE_URL}/save_patient_data`; // New endpoint for saving data
     const GET_ALL_PATIENT_DATA_ENDPOINT = `${FLASK_BACKEND_BASE_URL}/get_patient_all_data`; // New endpoint
 
 
-    const SUMMARIZATION_PROMPT = "Summarize the patient prescription for patientId ";
+    //const SUMMARIZATION_PROMPT = "Summarize the patient prescription for patientId ";
+
+    const SUMMARIZATION_PROMPT = `Extract and summarize the key details from the doctor's prescription provided below.  
+
+                    Rules for formatting the summary:
+                    - If a subsection detail is missing, skip just that line.  
+                    - If an entire section has no available details, skip that section completely.  
+                    - If the diagnosis is not explicitly mentioned, infer it from the prescribed medicines when possible.  
+                    - Ensure the output remains clean, readable, and well-structured.  
+
+                    Organize the summary with the following headings:
+
+                    **Patient Information:**  
+                    - Name: [Patient's Name]  
+                    - Age: [Age]  
+                    - Symptoms: [List symptoms]
+
+                    **Treatment Details:**  
+                    - Date of Treatment: [Date]  
+                    - Time of Treatment: [Time]  
+                    - Diagnosis: [Diagnosis or inferred from medicines]
+
+                    **Provider Information:**  
+                    - Doctor's Name: [Doctor's Name]  
+                    - Doctor's Email Address / Phone Number: [Contact Information]  
+                    - Clinic/Hospital Name: [Clinic/Hospital Name]  
+
+                    **Prescription Summary:**  
+                    - [List each medication, dosage, and frequency]
+
+                    **Doctor's Advice, Discharge Summary, Follow-ups:**  
+                    - Doctor's Advice: [Advice]  
+                    - Discharge Summary: [Summary]  
+                    - Follow-up Visits: [Details].`;
+
+    console.log(SUMMARIZATION_PROMPT);
+
+
+    const USG_REPORT_PROMPT = `
+          Generate a concise, structured summary of the following USG (Ultrasound Sonography) report. 
+          The summary should be presented in a clean, templated format. 
+          Extract and highlight the following key findings:
+
+          1. Patient Demographics: (e.g., Patient ID, Name, Age)
+          2. Clinical Indication: (The reason for the scan)
+          3. Findings/Observations: (Key details found in the report, e.g., organ size, presence of cysts, masses, or fluid)
+          4. Conclusion/Impression: (The final diagnosis or summary of findings by the radiologist)
+          5. Recommendation/Follow-up: (Any recommended next steps, if mentioned)
+
+          Return the summary in a simple text format without any extra conversational text.`;
+
+
+    console.log(USG_REPORT_PROMPT);
+
 
 
     // --- Common Functions (Accessible to both index.html and patient_prescriptions.html) ---
@@ -54,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const medicalHistoryUpload = document.getElementById('medicalHistoryUpload'); // The hidden input type="file"
         const uploadBtnWrapper = document.querySelector('.upload-btn-wrapper'); // The div containing the button and input
         const uploadVisualBtn = uploadBtnWrapper.querySelector('.upload-btn'); // The visible button
+        const uploadUsgReportVisualBtn = document.getElementById('uploadUsgReportVisualBtn');
+        const usgReportUpload = document.getElementById('usgReportUpload');
+
 
 
         // --- Helper Functions ---
@@ -157,6 +216,184 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.error("Error: Upload button or hidden file input not found for index.html.");
         }
+
+         // New event listener for the patientId input field
+        patientIdInput.addEventListener('change', async () => {
+            const patientId = patientIdInput.value.trim();
+            if (patientId) {
+                // Fetch and populate patient details
+                await fetchPatientDetails(patientId);
+            } else {
+                // If ID is cleared, reset the form
+                resetPatientForm();
+            }
+        });
+
+
+        /**
+         * Fetches patient details from the backend and populates the form.
+         * @param {string} patientId - The patient's unique ID.
+         */
+        async function fetchPatientDetails(patientId) {
+            console.log(`Fetching details for patient ID: ${patientId}`);
+            
+            // Temporary variables to hold the original values
+            const originalId = patientIdInput.value;
+            patientIdInput.disabled = true;
+
+            try {
+                const response = await fetch(`${GET_ALL_PATIENT_DATA_ENDPOINT}?patientId=${patientId}`);
+                const data = await response.json();
+
+                if (response.ok && data.patientDetails) {
+                    console.log('Patient details retrieved:', data.patientDetails);
+                    const details = data.patientDetails;
+                    fullNameInput.value = details.fullName || '';
+                    dobInput.value = details.dob || '';
+                    genderSelect.value = details.gender || '';
+                    contactInfoInput.value = details.contactInfo || '';
+                    addressInput.value = details.address || '';
+                    
+                    // Display a success message
+                    console.log('Patient details populated successfully.');
+
+                } else {
+                    console.error('Patient not found or error retrieving data:', data);
+                    // Reset fields if patient is not found
+                    resetPatientFormExceptId(originalId);
+                    alert('No existing patient found with that ID. Please enter new details.');
+                }
+            } catch (error) {
+                console.error('Network or server error when fetching patient details:', error);
+                resetPatientFormExceptId(originalId);
+                alert('Failed to connect to the backend server to retrieve patient data.');
+            } finally {
+                patientIdInput.disabled = false;
+            }
+        }
+
+        function resetPatientFormExceptId(currentId) {
+            fullNameInput.value = '';
+            dobInput.value = '';
+            genderSelect.value = '';
+            contactInfoInput.value = '';
+            addressInput.value = '';
+            medicalHistoryUpload.value = '';
+            uploadVisualBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload Medical History';
+            uploadVisualBtn.style.backgroundColor = '#6c757d';
+            uploadVisualBtn.style.borderColor = '#6c757d';
+            patientIdInput.value = currentId; // Re-set the original ID
+        }
+
+       /** Handles the file selection and upload process for USG report summarization.
+         * This version allows exactly two images, reads them as separate base64 strings,
+         * and sends both the base64 strings and their filenames in a single JSON payload.
+         */
+        usgReportUpload.addEventListener('change', async (event) => {
+            const files = event.target.files;
+
+            if (files.length === 0) {
+                // Reset button state if no file is selected
+                uploadUsgReportVisualBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload USG Report';
+                uploadUsgReportVisualBtn.style.backgroundColor = '#6c757d';
+                uploadUsgReportVisualBtn.style.borderColor = '#6c757d';
+                uploadUsgReportVisualBtn.disabled = false;
+                return;
+            }
+
+            if (files.length !== 2) {
+                alert('Please select exactly two files: a BW image and a Doppler image.');
+                usgReportUpload.value = ''; // Clear file input
+                uploadUsgReportVisualBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload USG Report';
+                uploadUsgReportVisualBtn.style.backgroundColor = '#6c757d';
+                uploadUsgReportVisualBtn.style.borderColor = '#6c757d';
+                uploadUsgReportVisualBtn.disabled = false;
+                return;
+            }
+
+            const patientIdInput = document.getElementById('patientId');
+            const patientIdStr = String(patientIdInput.value).trim();
+            if (patientIdStr.length === 0) {
+                alert('Please fill in the Patient ID before uploading files.');
+                usgReportUpload.value = '';
+                uploadUsgReportVisualBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload USG Report';
+                uploadUsgReportVisualBtn.style.backgroundColor = '#6c757d';
+                uploadUsgReportVisualBtn.style.borderColor = '#6c757d';
+                uploadUsgReportVisualBtn.disabled = false;
+                return;
+            }
+
+            uploadUsgReportVisualBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Files...';
+            uploadUsgReportVisualBtn.disabled = true;
+            uploadUsgReportVisualBtn.style.backgroundColor = '#f0ad4e';
+            uploadUsgReportVisualBtn.style.borderColor = '#eea236';
+
+            const readFileAsBase64 = (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve({
+                        name: file.name,
+                        base64: e.target.result.split(',')[1]
+                    });
+                    reader.onerror = (error) => reject(error);
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            try {
+                const [file1, file2] = files;
+
+                if (!file1.type.startsWith('image/') || !file2.type.startsWith('image/')) {
+                    alert('Both selected files must be images.');
+                    throw new Error('Invalid file type.');
+                }
+
+                const [processedFile1, processedFile2] = await Promise.all([
+                    readFileAsBase64(file1),
+                    readFileAsBase64(file2)
+                ]);
+
+                console.log('Successfully read two images. Sending to backend...');
+
+                // Send a single request with both base64 strings and their names in the body
+                const response = await fetch(USG_SUMMARIZATION_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        patientId: patientIdStr,
+                        image_bw_name: processedFile1.name, // Added image name
+                        image_bw: processedFile1.base64,
+                        image_doppler_name: processedFile2.name, // Added image name
+                        image_doppler: processedFile2.base64,
+                        prompt: ""
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log('USG report summarization successful!', data);
+                    const summary = data.response || "No summary provided.";
+                    alert('USG Report Summary received:\n\n' + summary);
+                } else {
+                    console.error('Error during USG report summarization:', data);
+                    alert('Error summarizing USG report: ' + (data.error || 'Unknown error. Check console.'));
+                }
+
+            } catch (error) {
+                console.error('File processing or network error:', error);
+                alert('An error occurred during file processing or upload. Please try again.');
+            } finally {
+                // Reset button state and input
+                usgReportUpload.value = '';
+                uploadUsgReportVisualBtn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload USG Report';
+                uploadUsgReportVisualBtn.disabled = false;
+                uploadUsgReportVisualBtn.style.backgroundColor = '#6c757d';
+                uploadUsgReportVisualBtn.style.borderColor = '#6c757d';
+            }
+        });
 
         /**
          * Handles the file selection and upload process for summarization.
@@ -279,13 +516,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Handle navigation to the prescriptions page
         viewPrescriptionsBtn.addEventListener('click', () => {
+                console.log(viewPrescriptionsBtn)
+                console.log('viewPrescriptionsBtn btn clicked')
                 window.location.href = 'patient_prescriptions.html';
             });
 
+                // Handle navigation to the USG reports page
+
+        const viewUsgReportsBtn = document.getElementById('viewUsgReportsBtn');
+        console.log(viewUsgReportsBtn)
+        if (viewUsgReportsBtn) {
+            viewUsgReportsBtn.addEventListener('click', () => {
+                console.log('Btn clicked')
+                window.location.href = 'patient_usg.html';
+            });
+        }
+        
     }
 
     // --- End Logic for index.html ---
-
 
   //prescriptions.html
 
@@ -427,6 +676,143 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     }
+
     // --- End Logic for patient_prescriptions.html ---
+
+
+    // --- Logic for patient_usg.html (USG Report Overview Page) ---
+    else if (window.location.pathname.endsWith('patient_usg.html')) {
+        // --- DOM Elements for patient_usg.html ---
+        const patientIdSearchInput = document.getElementById('patientIdSearch');
+        const loadUsgReportsBtn = document.getElementById('loadUsgReportsBtn');
+        const usgReportList = document.getElementById('usgReportList');
+        const usgReportDetailContent = document.getElementById('usgReportDetailContent');
+        const imageDisplay1 = document.getElementById('imageDisplay1');
+        const imageDisplay2 = document.getElementById('imageDisplay2');
+        const summaryText = document.getElementById('summaryText');
+        const selectedPatientIdDisplay = document.getElementById('selectedPatientId');
+
+        // Elements for general patient details display
+        const patientGeneralDetailsDiv = document.getElementById('patientGeneralDetails');
+        const detailName = document.getElementById('detailName');
+        const detailDob = document.getElementById('detailDob');
+        const detailGender = document.getElementById('detailGender');
+        const detailContact = document.getElementById('detailContact');
+        const detailAddress = document.getElementById('detailAddress');
+
+        // Function to display patient general details (re-used from patient_prescriptions.html)
+        function displayPatientGeneralDetails(details) {
+            if (details) {
+                detailName.textContent = details.fullName || 'N/A';
+                detailDob.textContent = details.dob || 'N/A';
+                detailGender.textContent = details.gender ? details.gender.charAt(0).toUpperCase() + details.gender.slice(1) : 'N/A';
+                detailContact.textContent = details.contactInfo || 'N/A';
+                detailAddress.textContent = details.address || 'N/A';
+                patientGeneralDetailsDiv.classList.remove('not-found');
+            } else {
+                detailName.textContent = 'Patient Not Found';
+                detailDob.textContent = 'N/A';
+                detailGender.textContent = 'N/A';
+                detailContact.textContent = 'N/A';
+                detailAddress.textContent = 'N/A';
+                patientGeneralDetailsDiv.classList.add('not-found');
+            }
+        }
+
+        // Function to display USG report details
+        function displayUsgReportDetails(usgReport) {
+            const placeholderText = usgReportDetailContent.querySelector('.placeholder-text');
+            if (placeholderText) {
+                placeholderText.remove();
+            }
+
+            imageDisplay1.innerHTML = '';
+            imageDisplay2.innerHTML = '';
+            summaryText.textContent = '';
+
+            if (!usgReport) {
+                summaryText.textContent = 'No report selected or data not found.';
+                return;
+            }
+
+            imageDisplay1.innerHTML = `<img src="${usgReport.image_bw_with_uri}" alt="${usgReport.image_bw_name}">`;
+            imageDisplay2.innerHTML = `<img src="${usgReport.image_doppler_with_uri}" alt="${usgReport.image_doppler_name}">`;
+            summaryText.textContent = usgReport.summary;
+        }
+
+        // Function to load and display all data for a given patient ID
+        loadUsgReportsBtn.addEventListener('click', async () => {
+            const patientId = patientIdSearchInput.value.trim();
+            if (!patientId) {
+                alert('Please enter a Patient ID to load USG reports.');
+                return;
+            }
+
+            showLoading(loadUsgReportsBtn, 'Loading...');
+            selectedPatientIdDisplay.textContent = `Patient ID: ${patientId}`;
+
+            // Clear previous displays
+            usgReportList.innerHTML = '';
+            imageDisplay1.innerHTML = '';
+            imageDisplay2.innerHTML = '';
+            summaryText.textContent = '';
+            usgReportList.innerHTML = `<li class="placeholder-item"><i class="fas fa-info-circle"></i> Enter Patient ID and click Load.</li>`;
+
+
+            try {
+                const response = await fetch(`${GET_ALL_PATIENT_DATA_ENDPOINT}?patientId=${patientId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Display Patient General Details
+                    displayPatientGeneralDetails(data.patientDetails);
+                    console.log('Len USG reports')
+                    console.log(data.usg_reports.length)
+
+
+                    // Display USG Reports List
+                    if (data.usg_reports && data.usg_reports.length > 0) {
+
+
+                        usgReportList.innerHTML = ''; // Clear placeholder once data arrives
+                        data.usg_reports.forEach((usgReport, index) => {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `<i class="fas fa-file-medical"></i> ${index + 1}.USG Report(${usgReport.image_bw_name}, ${usgReport.image_doppler_name})- ${usgReport.id}  ${new Date(usgReport.date).toLocaleDateString()}`;
+                            listItem.dataset.reportId = usgReport.id;
+                            listItem.addEventListener('click', () => {
+                                usgReportList.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                                listItem.classList.add('active');
+                                displayUsgReportDetails(usgReport);
+                            });
+                            usgReportList.appendChild(listItem);
+                        });
+                        // Automatically display the first report's details
+                        if (data.usg_reports.length > 0) {
+                            usgReportList.querySelector('li').click();
+                        }
+                    } else {
+                        usgReportList.innerHTML = '<li class="placeholder-item"><i class="fas fa-exclamation-circle"></i> No USG reports found for this patient.</li>';
+                        usgReportDetailContent.innerHTML = `
+                            <p class="placeholder-text">
+                                <i class="fas fa-mouse-pointer"></i> Select a report from the left pane to view its summary here.
+                            </p>
+                            <div id="imageDisplay1" class="image-display"></div>
+                            <div id="imageDisplay2" class="image-display"></div>
+                            <pre id="summaryText" class="summary-text"></pre>
+                        `;
+                    }
+                } else {
+                    displayPatientGeneralDetails(null); // Show 'Patient Not Found'
+                    usgReportList.innerHTML = '<li class="placeholder-item"><i class="fas fa-exclamation-circle"></i> No patient found with that ID.</li>';
+                }
+            } catch (error) {
+                console.error('Network or server error when fetching data:', error);
+                alert('Failed to connect to the backend server to retrieve data.');
+            } finally {
+                resetButton(loadUsgReportsBtn);
+            }
+        });
+    }
+    // --- End Logic for patient_usg.html ---
 
 });

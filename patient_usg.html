@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USG Reports - Hospital Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header class="app-header">
+        <h1><i class="fas fa-stethoscope"></i> Patient USG Portal</h1>
+        <nav>
+            <a href="index.html" class="nav-button"><i class="fas fa-user-plus"></i> Register Patient</a>
+            <a href="patient_usg.html" class="nav-button active"><i class="fas fa-clipboard-list"></i> View USG Reports</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <header class="header">
+            <i class="fa-solid fa-hospital-user header-icon"></i>
+            <h1>USG Reports</h1>
+        </header>
+
+        <section class="card search-patient-section">
+            <h2>Find Patient USG Reports</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="patientIdSearch">Patient ID</label>
+                    <input type="text" id="patientIdSearch" name="patientIdSearch" placeholder="e.g., P001">
+                </div>
+                <button class="btn primary-btn" id="loadUsgReportsBtn">
+                    <i class="fas fa-search"></i> Load Reports
+                </button>
+            </div>
+            <div id="selectedPatientId" class="patient-id-display"></div>
+        </section>
+
+        <section class="card patient-details-usg">
+            <h3>Patient General Details</h3>
+            <div id="patientGeneralDetails" class="details-grid">
+                <p><strong>Full Name:</strong> <span id="detailName">N/A</span></p>
+                <p><strong>Date of Birth:</strong> <span id="detailDob">N/A</span></p>
+                <p><strong>Gender:</strong> <span id="detailGender">N/A</span></p>
+                <p><strong>Contact:</strong> <span id="detailContact">N/A</span></p>
+                <p><strong>Address:</strong> <span id="detailAddress">N/A</span></p>
+            </div>
+        </section>
+
+        <section class="card usg-reports-view">
+            <div class="reports-container">
+                <div class="reports-list">
+                    <h3>USG Report History</h3>
+                    <ul id="usgReportList" class="report-list-items">
+                        <li class="placeholder-item"><i class="fas fa-info-circle"></i> Enter Patient ID and click Load.</li>
+                    </ul>
+                </div>
+                <div class="report-details-content">
+                    <div id="usgReportDetailContent" class="report-details-usg">
+                        <p class="placeholder-text">
+                            <i class="fas fa-mouse-pointer"></i> Select a report from the left pane to view its summary here.
+                        </p>
+                        <div id="imageDisplay1" class="image-display"></div>
+                        <div id="imageDisplay2" class="image-display"></div>
+                        <pre id="summaryText" class="summary-text"></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

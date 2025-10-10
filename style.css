@@ -159,6 +159,96 @@ body {
 }
 
 
+/* --- New Styles for patient_usg.html --- */
+
+.patient-details-usg {
+    background-color: #f7f7e9; /* Light yellow background for USG details */
+    border: 1px solid #e2e6c7;
+}
+
+.patient-details-usg p strong {
+    color: #8c8c00; /* Darker yellow/olive color for labels */
+}
+
+.usg-reports-view {
+    /* Reusing .card for general styling, but adding a custom class */
+}
+
+.reports-container {
+    display: flex;
+    gap: 25px; /* Space between the list and details panes */
+    align-items: stretch;
+}
+
+.reports-list {
+    flex: 0 0 350px; /* Fixed width for the list pane, matching prescriptions page */
+    padding: 20px;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+}
+
+.report-list-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.report-list-items li {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: #333;
+}
+
+.report-list-items li:hover {
+    background-color: #e2e6ea;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.report-list-items li.active {
+    background-color: #d1ecf1; /* Highlight active item */
+    border-color: #bee5eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.report-details-content {
+    flex-grow: 1; /* Details pane takes remaining space */
+}
+
+.report-details-usg {
+    /* Styles for the inner content container */
+    background-color: #fdfdfd;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 20px;
+    min-height: 250px;
+    overflow-y: auto;
+}
+
+/* Responsive adjustments for USG page */
+@media (max-width: 992px) {
+    .reports-container {
+        flex-direction: column;
+    }
+    .reports-list {
+        flex: none;
+        width: 100%;
+        max-height: none;
+    }
+}
+
 .upload-btn {
     background-color: #6c757d; /* Gray */
     color: white;
